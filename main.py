@@ -19,8 +19,8 @@ bright_red = (255, 0, 0)
 bright_green = (0, 255, 0)
 
 # change numbers below to affect resolution of game
-disp_width = 1920
-disp_height = 1080
+disp_width = 1366
+disp_height = 768
 
 disp_x = disp_width / 1920  # creates a scale for width of game (customizable)
 disp_y = disp_height / 1080  # creates a scale for height of game (customizable)
@@ -41,14 +41,14 @@ class Paddle(pygame.sprite.Sprite):
         self.image = pygame.Surface([width, height])
         self.image.fill(color)
         self.rect = self.image.get_rect()
-        self.rect.x = 1920 / 2 - 150
-        self.rect.y = 930
+        self.rect.x = ((1920 / 2) * disp_x) - (150 * disp_x)
+        self.rect.y = (930 * disp_y)
 
     def update(self):
         pos = pygame.mouse.get_pos()
         self.rect.x = pos[0]
-        if self.rect.x > 1920 - self.dimensions[0]:
-            self.rect.x = 1920 - self.dimensions[0]
+        if self.rect.x > (1920 * disp_x) - self.dimensions[0]:
+            self.rect.x = (1920 * disp_x) - self.dimensions[0]
 
     def handle_keys(self):
         key = pygame.key.get_pressed()
@@ -63,8 +63,8 @@ class Ball(pygame.sprite.Sprite):
         self.width = width
         self.speed = 10
         self.direction = 200  # direction of ball in degrees
-        self.x = 1920 / 2
-        self.y = 700
+        self.x = ((1920 / 2) * disp_x)
+        self.y = (700 * disp_y)
         super().__init__()
 
         self.image = pygame.Surface((width, width))
@@ -73,7 +73,7 @@ class Ball(pygame.sprite.Sprite):
 
     def bounce(self, difference):
         """Bounces the ball off horizontal surfaces only."""
-        self.direction = (180 - self.direction) % 360
+        self.direction = ((180 * disp_x) - self.direction) % 360
         self.direction -= difference
 
     def update(self, lives):
@@ -94,13 +94,13 @@ class Ball(pygame.sprite.Sprite):
             self.direction = (360 - self.direction) % 360
             self.x = 1
 
-        if self.x > 1920 - self.width:
+        if self.x > (1920 * disp_x) - self.width:
             self.direction = (360 - self.direction) % 360
-            self.x = 1920 - self.width - 1
+            self.x = (1920 * disp_x) - self.width - 1
 
-        if self.y > 1080:
-            self.x = 1920 / 2
-            self.y = 700
+        if self.y > 1080 * disp_y:
+            self.x = ((1920 / 2) * disp_x)
+            self.y = (700 * disp_y)
             return lives - 1
         return lives
 
@@ -193,7 +193,7 @@ top = 80
 # Five rows of blocks
 for row in range(5):
     for column in range(16):
-        block = Block(red, 240, 84, column * 242, top)
+        block = Block(red, (240 * disp_x), (84 * disp_y), column * 242, top)
         blocks.add(block)
         all_sprites.add(block)
     # Move the top of the next row down
