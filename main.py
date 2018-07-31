@@ -240,8 +240,8 @@ def main_game():
         deadblocks = pygame.sprite.spritecollide(ball, blocks, True)
 
         # makes the game more fast paced with 15 blocks left
-        if len(blocks) < 15:
-            ball.change_speed(1.5)
+        # if len(blocks) < 15:
+        #     ball.change_speed(1.5)
 
         # If we actually hit a block, bounce the ball
         if len(deadblocks) > 0:
