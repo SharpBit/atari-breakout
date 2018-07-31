@@ -36,7 +36,7 @@ class Ball(pygame.sprite.Sprite):
         self.width = width
         self.speed = 10
         self.direction = 200  # direction of ball in degrees
-        self.x = 0
+        self.x = 1920 / 2
         self.y = 180
         super().__init__()
 
@@ -86,7 +86,11 @@ green = (0, 200, 0)
 bright_red = (255, 0, 0)
 bright_green = (0, 255, 0)
 
+disp_x = 1920 / 1920
+disp_y = 1080 / 1080
+
 screen = pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN)
+screen.fill(black)
 pygame.display.set_caption('Atari Breakout')
 clock = pygame.time.Clock()
 
@@ -94,6 +98,28 @@ clock = pygame.time.Clock()
 def text_objects(text, font):
     text_surface = font.render(text, True, white)
     return text_surface, text_surface.get_rect()
+
+
+def QUIT():
+    pygame.quit()
+    quit()
+
+
+def button(msg, x, y, w, h, ic, ac, action=None):
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+    if x + w > mouse[0] > x and y + h > mouse[1] > y:
+        pygame.draw.rect(screen, ac, (x, y, w, h))
+
+        if click[0] == 1 and action:
+            action()
+    else:
+        pygame.draw.rect(screen, ic, (x, y, w, h))
+
+    small_text = pygame.font.Font("PressStart2P.ttf", int(35 * disp_x))
+    text_surf, text_rect = text_objects(msg, small_text)
+    text_rect.center = ((x + (w / 2)), (y + (h / 2)))
+    screen.blit(text_surf, text_rect)
 
 
 def game_intro():
@@ -105,45 +131,22 @@ def game_intro():
                 quit()
 
         screen.fill(black)
-        large_text = pygame.font.Font('PressStart2P.ttf', 150)
-        TextSurf, text_rect = text_objects('ATARI', large_text)
-        text_rect.center = ((1920 / 2), (300))
-        screen.blit(TextSurf, text_rect)
+        large_text = pygame.font.Font('PressStart2P.ttf', int(150 * disp_x))
+        TextSurf, TextRect = text_objects('ATARI', large_text)
+        TextRect.center = (((1920 / 2) * disp_x), ((300) * disp_x))
+        screen.blit(TextSurf, TextRect)
 
-        large_text = pygame.font.Font('PressStart2P.ttf', 150)
-        TextSurf, text_rect = text_objects('BREAKOUT', large_text)
-        text_rect.center = ((1920 / 2), (500))
-        screen.blit(TextSurf, text_rect)
+        large_text = pygame.font.Font('PressStart2P.ttf', int(150 * disp_x))
+        TextSurf, TextRect = text_objects('BREAKOUT', large_text)
+        TextRect.center = (((1920 / 2) * disp_x), ((500) * disp_x))
+        screen.blit(TextSurf, TextRect)
 
-        mouse = pygame.mouse.get_pos()
-
-        if 560 + 200 > mouse[0] > 560 and 650 + 100 > mouse[1] > 650:
-            pygame.draw.rect(screen, bright_green, (560, 650, 200, 100))
-            pygame.draw.rect(screen, red, (1160, 650, 200, 100))
-
-        elif 1160 + 200 > mouse[0] > 1160 and 650 + 100 > mouse[1] > 650:
-            pygame.draw.rect(screen, green, (560, 650, 200, 100))
-            pygame.draw.rect(screen, bright_red, (1160, 650, 200, 100))
-
-        else:
-            pygame.draw.rect(screen, green, (560, 650, 200, 100))
-            pygame.draw.rect(screen, red, (1160, 650, 200, 100))
-
-        button_text = pygame.font.Font('PressStart2P.ttf', 35)
-        TextSurf, text_rect = text_objects('START', button_text)
-        text_rect.center = ((660), (700))
-        screen.blit(TextSurf, text_rect)
-
-        button_text = pygame.font.Font('PressStart2P.ttf', 35)
-        TextSurf, text_rect = text_objects('QUIT', button_text)
-        text_rect.center = ((1260), (700))
-        screen.blit(TextSurf, text_rect)
+        button('START', 560 * disp_x, 650 * disp_y, 200, 100, green, bright_green, main_game)
+        button('QUIT', 1160 * disp_x, 650 * disp_y, 200, 100, red, bright_red, QUIT)
 
         pygame.display.update()
         clock.tick(60)
 
-
-game_intro()
 
 screen = pygame.display.set_mode((1920, 1080))
 pygame.display.set_caption('Atari Breakout')
@@ -162,34 +165,38 @@ ball = Ball(white, 30, 30)
 balls.add(ball)
 all_sprites.add(ball)
 
-game_over = False
-running = True
 
-while running:
-    clock.tick(60)  # 60 fps
-    screen.fill(black)
+def main_game():
+    game_over = False
+    running = True
+    while running:
+        clock.tick(60)  # 60 fps
+        screen.fill(black)
 
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
 
-    if not game_over:
-        paddle.update()
-        game_over = ball.update()
+        if not game_over:
+            paddle.update()
+            game_over = ball.update()
 
-    if game_over:
-        # do game over stuff
-        pass
+        if game_over:
+            # do game over stuff
+            pass
 
-    if pygame.sprite.spritecollide(paddle, balls, False):
-        # diff lets you try to bounce the ball in a certain direction depending on
-        # where on the paddle you hit the ball
-        diff = (paddle.rect.x + paddle.dimensions[0] / 2) - (ball.rect.x + ball.rect.height / 2)
-        # set the ball's y if the edge of the paddle
-        ball.rect.y = screen.get_height() - paddle.dimensions[1] - ball.rect.height
-        ball.bounce(diff)
-    all_sprites.draw(screen)
-    pygame.display.flip()
+        if pygame.sprite.spritecollide(paddle, balls, False):
+            # diff lets you try to bounce the ball in a certain direction   depending on
+            # where on the paddle you hit the ball
+            diff = (paddle.rect.x + paddle.dimensions[0] / 2) - (ball.rect.x + ball.rect.height / 2)
+            # set the ball's y if the edge of the paddle
+            ball.rect.y = screen.get_height() - paddle.dimensions[1] - ball.rect.height
+            ball.bounce(diff)
+        all_sprites.draw(screen)
+        pygame.display.flip()
 
-pygame.quit()
-quit()
+    pygame.quit()
+    quit()
+
+
+game_intro()
