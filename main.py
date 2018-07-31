@@ -18,17 +18,18 @@ green = (0, 200, 0)
 bright_red = (255, 0, 0)
 bright_green = (0, 255, 0)
 
-#change numbers below to affect resolution of game
-disp_width = 1366 
-disp_height = 768
+# change numbers below to affect resolution of game
+disp_width = 1920
+disp_height = 1080
 
-disp_x = disp_width / 1920 #creates a scale for width of game (customizable)
-disp_y = disp_height / 1080 #creates a scale for height of game (customizable)
+disp_x = disp_width / 1920  # creates a scale for width of game (customizable)
+disp_y = disp_height / 1080  # creates a scale for height of game (customizable)
 
-screen = pygame.display.set_mode((disp_width, disp_height), pygame.FULLSCREEN) 
+screen = pygame.display.set_mode((disp_width, disp_height), pygame.FULLSCREEN)
 screen.fill(black)
 pygame.display.set_caption('Atari Breakout')
 clock = pygame.time.Clock()
+
 
 class Paddle(pygame.sprite.Sprite):
 
@@ -41,13 +42,18 @@ class Paddle(pygame.sprite.Sprite):
         self.image.fill(color)
         self.rect = self.image.get_rect()
         self.rect.x = 1920 / 2 - 150
-        self.rect.y = 800
+        self.rect.y = 930
 
     def update(self):
         pos = pygame.mouse.get_pos()
         self.rect.x = pos[0]
         if self.rect.x > 1920 - self.dimensions[0]:
             self.rect.x = 1920 - self.dimensions[0]
+
+    def handle_keys(self):
+        key = pygame.key.get_pressed()
+        if key[pygame.K_ESCAPE]:
+            return game_intro()
 
 
 class Ball(pygame.sprite.Sprite):
@@ -58,7 +64,7 @@ class Ball(pygame.sprite.Sprite):
         self.speed = 10
         self.direction = 200  # direction of ball in degrees
         self.x = 1920 / 2
-        self.y = 180
+        self.y = 700
         super().__init__()
 
         self.image = pygame.Surface((width, width))
@@ -94,9 +100,25 @@ class Ball(pygame.sprite.Sprite):
 
         if self.y > 1080:
             self.x = 1920 / 2
-            self.y = 180
+            self.y = 700
             return lives - 1
         return lives
+
+
+class Block(pygame.sprite.Sprite):
+
+    def __init__(self, color, width, height, x, y):
+        self.color = color
+        self.width = width
+        self.height = height
+        super().__init__()
+
+        self.image = pygame.Surface((width, height))
+        self.image.fill(color)
+        self.rect = self.image.get_rect()
+
+        self.rect.x = x
+        self.rect.y = y
 
 
 def text_objects(text, font):
@@ -104,13 +126,13 @@ def text_objects(text, font):
     return text_surface, text_surface.get_rect()
 
 
-def QUIT(): #makes the quit button work
+def QUIT():  # makes the quit button work
     pygame.quit()
     quit()
 
 
-def button(msg, x, y, w, h, ic, ac, action=None): 
-	# msg = text, x/y = pos of button, w/h = width height, ic = color when mouse not hover, ac = color when mouse hover, action = function to execute
+def button(msg, x, y, w, h, ic, ac, action=None):
+        # msg = text, x/y = pos of button, w/h = width height, ic = color when mouse not hover, ac = color when mouse hover, action = function to execute
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if x + w > mouse[0] > x and y + h > mouse[1] > y:
@@ -127,8 +149,9 @@ def button(msg, x, y, w, h, ic, ac, action=None):
     screen.blit(text_surf, text_rect)
 
 
-def game_intro(): #title screen for breakout
+def game_intro():  # title screen for breakout
     intro = True
+    pygame.mouse.set_visible(1)  # makes the mouse appear
     while intro:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -152,17 +175,29 @@ def game_intro(): #title screen for breakout
         pygame.display.update()
         clock.tick(60)
 
+
 blocks = pygame.sprite.Group()
 balls = pygame.sprite.Group()  # all sprites have to be in a group
 all_sprites = pygame.sprite.Group()
 
 # Initialize all sprites
-paddle = Paddle(blue, (300*disp_x), (30*disp_y))
+paddle = Paddle(blue, (300 * disp_x), (30 * disp_y))
 all_sprites.add(paddle)
 
-ball = Ball(white, 30*disp_x, 30*disp_y)
+ball = Ball(white, 30 * disp_x, 30 * disp_y)
 balls.add(ball)
 all_sprites.add(ball)
+
+top = 80
+
+# Five rows of blocks
+for row in range(5):
+    for column in range(16):
+        block = Block(red, 240, 84, column * 242, top)
+        blocks.add(block)
+        all_sprites.add(block)
+    # Move the top of the next row down
+    top += 86
 
 
 def main_game():
@@ -172,6 +207,7 @@ def main_game():
         pygame.mouse.set_visible(0)  # makes mouse disappear
         clock.tick(60)  # 60 fps
         screen.fill(black)
+        paddle.handle_keys()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -193,6 +229,17 @@ def main_game():
             ball.bounce(diff)
         all_sprites.draw(screen)
         pygame.display.flip()
+
+    # Check for collisions between the ball and the blocks
+    deadblocks = pygame.sprite.spritecollide(ball, blocks, True)
+
+    # If we actually hit a block, bounce the ball
+    if len(deadblocks) > 0:
+        ball.bounce(0)
+
+        # Game ends if all the blocks are gone
+        if len(blocks) == 0:
+            running = False
 
     pygame.quit()
     quit()
