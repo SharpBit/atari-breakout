@@ -143,7 +143,7 @@ def button(msg, x, y, w, h, ic, ac, action=None):
     else:
         pygame.draw.rect(screen, ic, (x, y, w, h))
 
-    small_text = pygame.font.Font("PressStart2P.ttf", int(35 * disp_x))
+    small_text = pygame.font.Font("assets/PressStart2P.ttf", int(35 * disp_x))
     text_surf, text_rect = text_objects(msg, small_text)
     text_rect.center = ((x + (w / 2)), (y + (h / 2)))
     screen.blit(text_surf, text_rect)
@@ -159,12 +159,12 @@ def game_intro():  # title screen for breakout
                 quit()
 
         screen.fill(black)
-        large_text = pygame.font.Font('PressStart2P.ttf', int(150 * disp_x))
+        large_text = pygame.font.Font('assets/PressStart2P.ttf', int(150 * disp_x))
         TextSurf, TextRect = text_objects('ATARI', large_text)
         TextRect.center = (((1920 / 2) * disp_x), ((300) * disp_x))
         screen.blit(TextSurf, TextRect)
 
-        large_text = pygame.font.Font('PressStart2P.ttf', int(150 * disp_x))
+        large_text = pygame.font.Font('assets/PressStart2P.ttf', int(150 * disp_x))
         TextSurf, TextRect = text_objects('BREAKOUT', large_text)
         TextRect.center = (((1920 / 2) * disp_x), ((500) * disp_x))
         screen.blit(TextSurf, TextRect)
