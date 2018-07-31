@@ -8,6 +8,27 @@ import pygame
 from pygame.locals import *
 import math
 
+pygame.init()
+
+black = (0, 0, 0)
+white = (255, 255, 255)
+red = (200, 0, 0)
+blue = (50, 150, 255)
+green = (0, 200, 0)
+bright_red = (255, 0, 0)
+bright_green = (0, 255, 0)
+
+#change numbers below to affect resolution of game
+disp_width = 1366 
+disp_height = 768
+
+disp_x = disp_width / 1920 #creates a scale for width of game (customizable)
+disp_y = disp_height / 1080 #creates a scale for height of game (customizable)
+
+screen = pygame.display.set_mode((disp_width, disp_height), pygame.FULLSCREEN) 
+screen.fill(black)
+pygame.display.set_caption('Atari Breakout')
+clock = pygame.time.Clock()
 
 class Paddle(pygame.sprite.Sprite):
 
@@ -78,36 +99,18 @@ class Ball(pygame.sprite.Sprite):
         return lives
 
 
-pygame.init()
-
-black = (0, 0, 0)
-white = (255, 255, 255)
-red = (200, 0, 0)
-blue = (50, 150, 255)
-green = (0, 200, 0)
-bright_red = (255, 0, 0)
-bright_green = (0, 255, 0)
-
-disp_x = 1920 / 1920
-disp_y = 1080 / 1080
-
-screen = pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN)
-screen.fill(black)
-pygame.display.set_caption('Atari Breakout')
-clock = pygame.time.Clock()
-
-
 def text_objects(text, font):
     text_surface = font.render(text, True, white)
     return text_surface, text_surface.get_rect()
 
 
-def QUIT():
+def QUIT(): #makes the quit button work
     pygame.quit()
     quit()
 
 
-def button(msg, x, y, w, h, ic, ac, action=None):
+def button(msg, x, y, w, h, ic, ac, action=None): 
+	# msg = text, x/y = pos of button, w/h = width height, ic = color when mouse not hover, ac = color when mouse hover, action = function to execute
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if x + w > mouse[0] > x and y + h > mouse[1] > y:
@@ -124,7 +127,7 @@ def button(msg, x, y, w, h, ic, ac, action=None):
     screen.blit(text_surf, text_rect)
 
 
-def game_intro():
+def game_intro(): #title screen for breakout
     intro = True
     while intro:
         for event in pygame.event.get():
@@ -149,20 +152,15 @@ def game_intro():
         pygame.display.update()
         clock.tick(60)
 
-
-screen = pygame.display.set_mode((1920, 1080))
-pygame.display.set_caption('Atari Breakout')
-background = pygame.Surface(screen.get_size())
-
 blocks = pygame.sprite.Group()
 balls = pygame.sprite.Group()  # all sprites have to be in a group
 all_sprites = pygame.sprite.Group()
 
 # Initialize all sprites
-paddle = Paddle(blue, 300, 30)
+paddle = Paddle(blue, (300*disp_x), (30*disp_y))
 all_sprites.add(paddle)
 
-ball = Ball(white, 30, 30)
+ball = Ball(white, 30*disp_x, 30*disp_y)
 balls.add(ball)
 all_sprites.add(ball)
 
