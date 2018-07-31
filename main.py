@@ -4,10 +4,9 @@
 # new_path = '/Users/' + username + '/Library/Python/3.6/lib/python/site-packages'
 # sys.path.insert(0, new_path)
 
-import pygame
-from pygame.locals import *
-import random
 import math
+import pygame
+import random
 
 pygame.init()
 
@@ -18,6 +17,7 @@ blue = (50, 150, 255)
 green = (0, 200, 0)
 bright_red = (255, 0, 0)
 bright_green = (0, 255, 0)
+dim_white = (200, 200, 200)
 
 # change numbers below to affect resolution of game
 disp_width = 1920
@@ -79,7 +79,7 @@ class Ball(pygame.sprite.Sprite):
 
     def change_speed(self, multiplier):
         """Lets you update the speed from the main loop"""
-        self.speed = self.speed * 1.5
+        self.speed *= multiplier
 
     def update(self, lives):
         # ######### #
@@ -132,6 +132,13 @@ def text_objects(text, font):
     return text_surface, text_surface.get_rect()
 
 
+def text_box(msg, x, y):
+    small_text = pygame.font.Font("assets/PressStart2P.ttf", int(35 * disp_x))
+    text_surf, text_rect = text_objects(msg, small_text)
+    text_rect.center = ((x), (y))
+    screen.blit(text_surf, text_rect)
+
+
 def QUIT():  # makes the quit button work
     pygame.quit()
     quit()
@@ -149,10 +156,29 @@ def button(msg, x, y, w, h, ic, ac, action=None):
     else:
         pygame.draw.rect(screen, ic, (x, y, w, h))
 
-    small_text = pygame.font.Font("assets/PressStart2P.ttf", int(35 * disp_x))
+    small_text = pygame.font.Font('assets/PressStart2P.ttf', int(35 * disp_x))
     text_surf, text_rect = text_objects(msg, small_text)
     text_rect.center = ((x + (w / 2)), (y + (h / 2)))
     screen.blit(text_surf, text_rect)
+
+
+def gear(x, y, w, h, ic, ac, action=None):
+    # x/y = pos of button, w/h = width height, ic = color when mouse not hover, ac = color when mouse hover, action = function to execute
+    gearImg = pygame.image.load('assets/gear.png')
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+    if x + w > mouse[0] > x and y + h > mouse[1] > y:
+        pygame.draw.rect(screen, ac, (x, y, w, h), 5)
+        pygame.draw.rect(screen, ac, (x, y, w, h))
+
+        if click[0] == 1 and action:
+            action()
+    else:
+        pygame.draw.rect(screen, ic, (x, y, w, h), 5)
+        pygame.draw.rect(screen, ic, (x, y, w, h))
+
+    # draws gearImg into the surface
+    screen.blit(gearImg, ((x * disp_x), (y * disp_y), (w * disp_x), (h * disp_y)))
 
 
 def game_intro():  # title screen for breakout
@@ -164,6 +190,7 @@ def game_intro():  # title screen for breakout
                 pygame.quit()
                 quit()
 
+        # title of the game
         screen.fill(black)
         large_text = pygame.font.Font('assets/PressStart2P.ttf', int(150 * disp_x))
         TextSurf, TextRect = text_objects('ATARI', large_text)
@@ -175,8 +202,12 @@ def game_intro():  # title screen for breakout
         TextRect.center = (((1920 / 2) * disp_x), ((500) * disp_x))
         screen.blit(TextSurf, TextRect)
 
+        # start/quit buttons
         button('START', 560 * disp_x, 650 * disp_y, 200, 100, green, bright_green, main_game)
         button('QUIT', 1160 * disp_x, 650 * disp_y, 200, 100, red, bright_red, QUIT)
+
+        # options gear button
+        gear(10 * disp_x, 10 * disp_y, 107 * disp_x, 107 * disp_y, dim_white, white)
 
         pygame.display.update()
         clock.tick(60)
@@ -209,6 +240,7 @@ for row in range(5):
 def main_game():
     lives = 10
     running = True
+    sped_up = False
     while running:
         pygame.mouse.set_visible(0)  # makes mouse disappear
         clock.tick(60)  # 60 fps
@@ -226,6 +258,8 @@ def main_game():
         if lives == 0:
             running = False
 
+        text_box('LIVES: ' + str(lives), (175 * disp_x), (40 * disp_x))
+
         if pygame.sprite.spritecollide(paddle, balls, False):
             # diff lets you try to bounce the ball in a certain direction depending on
             # where on the paddle you hit the ball
@@ -240,8 +274,9 @@ def main_game():
         deadblocks = pygame.sprite.spritecollide(ball, blocks, True)
 
         # makes the game more fast paced with 15 blocks left
-        # if len(blocks) < 15:
-        #     ball.change_speed(1.5)
+        if len(blocks) < 15 and not sped_up:
+            ball.change_speed(1.5)
+            sped_up = True
 
         # If we actually hit a block, bounce the ball
         if len(deadblocks) > 0:
