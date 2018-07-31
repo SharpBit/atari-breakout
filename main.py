@@ -49,7 +49,7 @@ class Ball(pygame.sprite.Sprite):
         self.direction = (180 - self.direction) % 360
         self.direction -= difference
 
-    def update(self):
+    def update(self, lives):
         # ######### #
         # This is from some stuff about ball physics about how it bounces
         direction_radians = math.radians(self.direction)
@@ -72,8 +72,10 @@ class Ball(pygame.sprite.Sprite):
             self.x = 1920 - self.width - 1
 
         if self.y > 1080:
-            return True
-        return False
+            self.x = 1920 / 2
+            self.y = 180
+            return lives - 1
+        return lives
 
 
 pygame.init()
@@ -150,7 +152,6 @@ def game_intro():
 
 screen = pygame.display.set_mode((1920, 1080))
 pygame.display.set_caption('Atari Breakout')
-pygame.mouse.set_visible(0)  # makes mouse disappear
 background = pygame.Surface(screen.get_size())
 
 blocks = pygame.sprite.Group()
@@ -167,9 +168,10 @@ all_sprites.add(ball)
 
 
 def main_game():
-    game_over = False
+    lives = 3
     running = True
     while running:
+        pygame.mouse.set_visible(0)  # makes mouse disappear
         clock.tick(60)  # 60 fps
         screen.fill(black)
 
@@ -177,16 +179,15 @@ def main_game():
             if event.type == pygame.QUIT:
                 running = False
 
-        if not game_over:
+        if lives > 0:
             paddle.update()
-            game_over = ball.update()
+            lives = ball.update(lives)
 
-        if game_over:
-            # do game over stuff
-            pass
+        if lives == 0:
+            running = False
 
         if pygame.sprite.spritecollide(paddle, balls, False):
-            # diff lets you try to bounce the ball in a certain direction   depending on
+            # diff lets you try to bounce the ball in a certain direction depending on
             # where on the paddle you hit the ball
             diff = (paddle.rect.x + paddle.dimensions[0] / 2) - (ball.rect.x + ball.rect.height / 2)
             # set the ball's y if the edge of the paddle
