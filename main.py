@@ -6,6 +6,7 @@
 
 import pygame
 from pygame.locals import *
+import random
 import math
 
 pygame.init()
@@ -19,8 +20,8 @@ bright_red = (255, 0, 0)
 bright_green = (0, 255, 0)
 
 # change numbers below to affect resolution of game
-disp_width = 1366
-disp_height = 768
+disp_width = 1920
+disp_height = 1080
 
 disp_x = disp_width / 1920  # creates a scale for width of game (customizable)
 disp_y = disp_height / 1080  # creates a scale for height of game (customizable)
@@ -62,7 +63,7 @@ class Ball(pygame.sprite.Sprite):
         self.color = color
         self.width = width
         self.speed = 10
-        self.direction = 200  # direction of ball in degrees
+        self.direction = random.randint(-50, 50)  # direction of ball in degrees
         self.x = ((1920 / 2) * disp_x)
         self.y = (700 * disp_y)
         super().__init__()
@@ -73,8 +74,12 @@ class Ball(pygame.sprite.Sprite):
 
     def bounce(self, difference):
         """Bounces the ball off horizontal surfaces only."""
-        self.direction = ((180 * disp_x) - self.direction) % 360
+        self.direction = (180 - self.direction) % 360
         self.direction -= difference
+
+    def change_speed(self, multiplier):
+        """Lets you update the speed from the main loop"""
+        self.speed = self.speed * 1.5
 
     def update(self, lives):
         # ######### #
@@ -101,6 +106,7 @@ class Ball(pygame.sprite.Sprite):
         if self.y > 1080 * disp_y:
             self.x = ((1920 / 2) * disp_x)
             self.y = (700 * disp_y)
+            self.direction = random.randint(-50, 50)
             return lives - 1
         return lives
 
@@ -176,11 +182,11 @@ def game_intro():  # title screen for breakout
         clock.tick(60)
 
 
+# Initialize all sprites
 blocks = pygame.sprite.Group()
-balls = pygame.sprite.Group()  # all sprites have to be in a group
+balls = pygame.sprite.Group()
 all_sprites = pygame.sprite.Group()
 
-# Initialize all sprites
 paddle = Paddle(blue, (300 * disp_x), (30 * disp_y))
 all_sprites.add(paddle)
 
@@ -188,26 +194,26 @@ ball = Ball(white, 30 * disp_x, 30 * disp_y)
 balls.add(ball)
 all_sprites.add(ball)
 
-top = 80
+top = 80  # y of top layer of blocks
 
 # Five rows of blocks
 for row in range(5):
-    for column in range(16):
-        block = Block(red, (240 * disp_x), (84 * disp_y), column * 242, top)
+    for column in range(8):
+        block = Block(red, (240 * disp_x), (54 * disp_y), column * (240 * disp_x + 2), top)
         blocks.add(block)
         all_sprites.add(block)
     # Move the top of the next row down
-    top += 86
+    top += 54 * disp_y + 2
 
 
 def main_game():
-    lives = 3
+    lives = 10
     running = True
     while running:
         pygame.mouse.set_visible(0)  # makes mouse disappear
         clock.tick(60)  # 60 fps
         screen.fill(black)
-        paddle.handle_keys()
+        paddle.handle_keys()  # checks for ESC button (then goes back to main menu)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -230,16 +236,20 @@ def main_game():
         all_sprites.draw(screen)
         pygame.display.flip()
 
-    # Check for collisions between the ball and the blocks
-    deadblocks = pygame.sprite.spritecollide(ball, blocks, True)
+        # Check for collisions between the ball and the blocks
+        deadblocks = pygame.sprite.spritecollide(ball, blocks, True)
 
-    # If we actually hit a block, bounce the ball
-    if len(deadblocks) > 0:
-        ball.bounce(0)
+        # makes the game more fast paced with 15 blocks left
+        if len(blocks) < 15:
+            ball.change_speed(1.5)
 
-        # Game ends if all the blocks are gone
-        if len(blocks) == 0:
-            running = False
+        # If we actually hit a block, bounce the ball
+        if len(deadblocks) > 0:
+            ball.bounce(0)
+
+            # Game ends if all the blocks are gone
+            if len(blocks) == 0:
+                running = False
 
     pygame.quit()
     quit()
