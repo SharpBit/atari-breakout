@@ -80,8 +80,70 @@ pygame.init()
 
 black = (0, 0, 0)
 white = (255, 255, 255)
-red = (255, 0, 0)
+red = (200, 0, 0)
 blue = (50, 150, 255)
+green = (0, 200, 0)
+bright_red = (255, 0, 0)
+bright_green = (0, 255, 0)
+
+screen = pygame.display.set_mode((1920, 1080), pygame.FULLSCREEN)
+pygame.display.set_caption('Atari Breakout')
+clock = pygame.time.Clock()
+
+
+def text_objects(text, font):
+    text_surface = font.render(text, True, white)
+    return text_surface, text_surface.get_rect()
+
+
+def game_intro():
+    intro = True
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        screen.fill(black)
+        large_text = pygame.font.Font('PressStart2P.ttf', 150)
+        TextSurf, text_rect = text_objects('ATARI', large_text)
+        text_rect.center = ((1920 / 2), (300))
+        screen.blit(TextSurf, text_rect)
+
+        large_text = pygame.font.Font('PressStart2P.ttf', 150)
+        TextSurf, text_rect = text_objects('BREAKOUT', large_text)
+        text_rect.center = ((1920 / 2), (500))
+        screen.blit(TextSurf, text_rect)
+
+        mouse = pygame.mouse.get_pos()
+
+        if 560 + 200 > mouse[0] > 560 and 650 + 100 > mouse[1] > 650:
+            pygame.draw.rect(screen, bright_green, (560, 650, 200, 100))
+            pygame.draw.rect(screen, red, (1160, 650, 200, 100))
+
+        elif 1160 + 200 > mouse[0] > 1160 and 650 + 100 > mouse[1] > 650:
+            pygame.draw.rect(screen, green, (560, 650, 200, 100))
+            pygame.draw.rect(screen, bright_red, (1160, 650, 200, 100))
+
+        else:
+            pygame.draw.rect(screen, green, (560, 650, 200, 100))
+            pygame.draw.rect(screen, red, (1160, 650, 200, 100))
+
+        button_text = pygame.font.Font('PressStart2P.ttf', 35)
+        TextSurf, text_rect = text_objects('START', button_text)
+        text_rect.center = ((660), (700))
+        screen.blit(TextSurf, text_rect)
+
+        button_text = pygame.font.Font('PressStart2P.ttf', 35)
+        TextSurf, text_rect = text_objects('QUIT', button_text)
+        text_rect.center = ((1260), (700))
+        screen.blit(TextSurf, text_rect)
+
+        pygame.display.update()
+        clock.tick(60)
+
+
+game_intro()
 
 screen = pygame.display.set_mode((1920, 1080))
 pygame.display.set_caption('Atari Breakout')
@@ -100,7 +162,6 @@ ball = Ball(white, 30, 30)
 balls.add(ball)
 all_sprites.add(ball)
 
-clock = pygame.time.Clock()
 game_over = False
 running = True
 
