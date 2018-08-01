@@ -202,14 +202,13 @@ def options():  # pops up the resolution options
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                oprunning = False
 
         button('1920 x 1080', (((1920 / 2) - 500) * disp_x), ((((1080 / 3) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op1)
         button('1366 x 768', (((1920 / 2) - 500) * disp_x), (((((1080 / 3) * 2) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op2)
         button('1280 x 720', (((1920 / 2) - 500) * disp_x), (((((1080 / 3) * 3) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op3)
 
         button('X', 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, red, bright_red, game_intro)  # button is slow rn, so use esc
-        text_box('Press ESC or click X to leave this menu', 600 * disp_x, 1054 *disp_y)
+        text_box('Press ESC or click X to leave this menu', 700 * disp_x, 1050 *disp_y)
 
         pygame.display.flip()  # allows options windows to actually stay
 
