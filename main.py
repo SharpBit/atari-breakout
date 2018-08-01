@@ -301,6 +301,7 @@ def main_game(level=1):
             running = False
 
         text_box('LIVES: ' + str(lives), (175 * disp_x), (40 * disp_x))
+        text_box('LEVEL ' + str(level), (disp_width - (145 * disp_x)), (40 * disp_x))
 
         if pygame.sprite.spritecollide(paddle, balls, False):
             # diff lets you try to bounce the ball in a certain direction depending on
