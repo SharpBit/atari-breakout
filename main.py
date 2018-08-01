@@ -7,6 +7,7 @@
 import math
 import pygame
 import random
+import time
 
 from screeninfo import get_monitors
 
@@ -23,6 +24,7 @@ bright_green = (0, 255, 0)
 dim_white = (200, 200, 200)
 
 res = str(get_monitors()[0])
+print(res)
 
 disp_width = int(res[8:12])
 disp_height = int(res[13:17]) if disp_width >= 1920 else int(res[13:16])
@@ -69,7 +71,7 @@ class Ball(pygame.sprite.Sprite):
         self.speed = 10
         self.direction = random.randint(-50, 50)  # direction of ball in degrees
         self.x = ((1920 / 2) * disp_x)
-        self.y = (700 * disp_y)
+        self.y = (900 * disp_y)
         super().__init__()
 
         self.image = pygame.Surface((width, width))
@@ -139,8 +141,8 @@ def text_objects(text, font):  # renders text
     return text_surface, text_surface.get_rect()
 
 
-def text_box(msg, x, y):  # makes a text box
-    small_text = pygame.font.Font("assets/PressStart2P.ttf", int(35 * disp_x))
+def text_box(msg, x, y, size=35):  # makes a text box
+    small_text = pygame.font.Font("assets/PressStart2P.ttf", int(size * disp_x))
     text_surf, text_rect = text_objects(msg, small_text)
     text_rect.center = ((x), (y))
     screen.blit(text_surf, text_rect)
@@ -172,8 +174,10 @@ def button(msg, x, y, w, h, ic, ac, action=None):
 def op1():  # music config
     return
 
+
 def op2():  # sound config
     return
+
 
 def options():  # pops up the resolution options
     oprunning = True
@@ -188,8 +192,8 @@ def options():  # pops up the resolution options
                 quit()
 
         soundImg = pygame.image.load('assets/sound.png')
-        soundImg = pygame.transform.scale(soundImg, (int(800 * disp_x), int(800 * disp_x)))  
-        
+        soundImg = pygame.transform.scale(soundImg, (int(800 * disp_x), int(800 * disp_x)))
+
         musicImg = pygame.image.load('assets/music.png')
         musicImg = pygame.transform.scale(musicImg, (int(800 * disp_x), int(800 * disp_x)))
 
@@ -197,7 +201,7 @@ def options():  # pops up the resolution options
         icon(musicImg, (((1040)) * disp_x), ((((1080 / 2) - 400)) * disp_y), 800 * disp_x, 800 * disp_y, dark_blue, blue, op2)
 
         button('X', 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, red, bright_red, game_intro)  # button is slow rn, so use esc
-        text_box('Press ESC or click X to leave this menu', 700 * disp_x, 1050 *disp_y)
+        text_box('Press ESC or click X to leave this menu', 700 * disp_x, 1050 * disp_y)
 
         pygame.display.flip()  # allows options windows to actually stay
 
@@ -218,6 +222,7 @@ def icon(img, x, y, w, h, ic, ac, action=None):  # loads the icon/button
 
     # draws gearImg into the surface
     screen.blit(img, (x, y))
+
 
 def game_intro():  # title screen for breakout
     gearImg = pygame.image.load('assets/gear.png')
@@ -282,10 +287,17 @@ def setup_blocks():
 def main_game(level=1):
     running = True
     sped_up = False
+    lives = 10
+    screen.fill(black)
     setup_blocks()
+    text_box('LIVES: ' + str(lives), (175 * disp_x), (40 * disp_x))
+    text_box('LEVEL ' + str(level), (disp_width - (145 * disp_x)), (40 * disp_x))
+    text_box('LEVEL ' + str(level), 1000 * disp_x, 500 * disp_y, 150)
+    pygame.display.flip()
+    time.sleep(3)
     ball.set_speed(10)
     if level == 1:
-        lives = 10
+        pass
     elif level == 2:
         ball.set_speed(12)
     elif level == 3:
@@ -336,7 +348,14 @@ def main_game(level=1):
 
             # Game ends if all the blocks are gone
             if len(blocks) == 0:
-                main_game(2)
+                if level == 3:
+                    running = False
+                # resets ball position
+                ball.direction = random.randint(-50, 50)
+                ball.x = ((1920 / 2) * disp_x)
+                ball.y = (900 * disp_y)
+                # loads the next level (faster ball speed)
+                main_game(level + 1)
 
     pygame.quit()
     quit()
