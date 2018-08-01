@@ -16,6 +16,8 @@ pygame.init()
 black = (0, 0, 0)
 white = (255, 255, 255)
 red = (200, 0, 0)
+orange = (255, 115, 49)
+yellow = (231, 198, 0)
 blue = (50, 150, 255)
 dark_blue = (40, 120, 215)
 green = (0, 200, 0)
@@ -41,8 +43,8 @@ sound = True
 music = True
 
 if music:
-	pygame.mixer.music.load('assets/8-bit-music.mp3')
-	pygame.mixer.music.play(-1)
+    pygame.mixer.music.load('assets/8-bit-music.mp3')
+    pygame.mixer.music.play(-1)
 
 breakout_icon = pygame.image.load('assets/breakout_icon.png')
 breakout_icon = pygame.transform.scale(breakout_icon, (32, 32))
@@ -164,7 +166,7 @@ def QUIT():  # makes the quit button work
     quit()
 
 
-def button(msg, x, y, w, h, ic, ac, action=None): #creates a button
+def button(msg, x, y, w, h, ic, ac, action=None):  # creates a button
     # msg = text, x/y = pos of button, w/h = width height, ic = color when mouse not hover, ac = color when mouse hover, action = function to execute
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
@@ -172,13 +174,13 @@ def button(msg, x, y, w, h, ic, ac, action=None): #creates a button
         pygame.draw.rect(screen, ac, (x, y, w, h))
 
         if click[0] == 1 and action:
-        	if sound: # triggers sound effect
-	        	pygame.mixer.music.load('assets/button_click.mp3')
-	        	pygame.mixer.music.play(0)
-	        if music:
-	        	pygame.mixer.music.load('assets/8-bit-music.mp3')
-	        	pygame.mixer.music.play(-1)
-	        action()
+            if sound:  # triggers sound effect
+                pygame.mixer.music.load('assets/button_click.mp3')
+                pygame.mixer.music.play(0)
+            if music:
+                pygame.mixer.music.load('assets/8-bit-music.mp3')
+                pygame.mixer.music.play(-1)
+            action()
     else:
         pygame.draw.rect(screen, ic, (x, y, w, h))
 
@@ -197,13 +199,13 @@ def icon(img, x, y, w, h, ic, ac, action=None):  # loads the icon/button
         pygame.draw.rect(screen, ac, (x, y, w, h))
 
         if click[0] == 1 and action:
-        	action()
-        	if sound: # triggers sound effect
-	        	pygame.mixer.music.load('assets/button_click.mp3')
-	        	pygame.mixer.music.play(0)
-	        if music:
-	        	pygame.mixer.music.load('assets/8-bit-music.mp3')
-	        	pygame.mixer.music.play(-1)
+            action()
+            if sound:  # triggers sound effect
+                pygame.mixer.music.load('assets/button_click.mp3')
+                pygame.mixer.music.play(0)
+            if music:
+                pygame.mixer.music.load('assets/8-bit-music.mp3')
+                pygame.mixer.music.play(-1)
 
     else:
         pygame.draw.rect(screen, dim_white, (x, y, w, h), 10)
@@ -217,13 +219,16 @@ def s_on():
     global sound
     sound = False
 
+
 def s_off():  # music config
     global sound
     sound = True
 
+
 def m_on():
     global music
     music = False
+
 
 def m_off():  # sound config
     global music
@@ -249,7 +254,7 @@ def options():  # pops up the resolution options
         musicImg = pygame.transform.scale(musicImg, (int(400 * disp_x), int(400 * disp_x)))
 
         nsoundImg = pygame.image.load('assets/sound_mute.png')
-        nsoundImg = pygame.transform.scale(nsoundImg, (int(400 * disp_x), int(400 * disp_x)))  
+        nsoundImg = pygame.transform.scale(nsoundImg, (int(400 * disp_x), int(400 * disp_x)))
 
         nmusicImg = pygame.image.load('assets/music_mute.png')
         nmusicImg = pygame.transform.scale(nmusicImg, (int(400 * disp_x), int(400 * disp_x)))
@@ -258,7 +263,7 @@ def options():  # pops up the resolution options
         m_ind = 'On' if music else 'Off'
 
         icon(nsoundImg, (1400 * disp_x), (((1080 / 4) - 200) * disp_y), 400 * disp_x, 400 * disp_y, dark_blue, blue, s_on)
-        icon(soundImg, (925 * disp_x), (((1080 / 4) - 200)* disp_y), 400 * disp_x, 400 * disp_y, dark_blue, blue, s_off)
+        icon(soundImg, (925 * disp_x), (((1080 / 4) - 200) * disp_y), 400 * disp_x, 400 * disp_y, dark_blue, blue, s_off)
         icon(nmusicImg, (1400 * disp_x), (((1080 / 4) + 275) * disp_y), 400 * disp_x, 400 * disp_y, dark_blue, blue, m_on)
         icon(musicImg, (925 * disp_x), (((1080 / 4) + 275) * disp_y), 400 * disp_x, 400 * disp_y, dark_blue, blue, m_off)
 
@@ -266,7 +271,7 @@ def options():  # pops up the resolution options
         text_box('Music : ' + m_ind, 400 * disp_x, 600 * disp_y, 60)
 
         button('X', 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, red, bright_red, game_intro)  # button is slow rn, so use esc
-        text_box('Press ESC or click X to leave this menu', 700 * disp_x, 1050 *disp_y)
+        text_box('Press ESC or click X to leave this menu', 700 * disp_x, 1050 * disp_y)
         pygame.display.flip()  # allows options windows to actually stay
 
 
@@ -321,13 +326,14 @@ def setup_blocks():
     global disp_y
     top = 80  # y of top layer of blocks
     # Five rows of blocks
+    colors = [red, orange, yellow, green, blue]
     for row in range(5):
         for column in range(8):
-            block = Block(red, (240 * disp_x), (54 * disp_y), column * (240 * disp_x + 2), top)
+            block = Block(colors[row], (240 * disp_x), (54 * disp_y), column * (240 * disp_x + 2), top)
             blocks.add(block)
             all_sprites.add(block)
         # Move the top of the next row down
-        top += 54 * disp_y + 2
+        top += 54 * disp_y
 
 
 def main_game(level=1):
@@ -379,8 +385,8 @@ def main_game(level=1):
             ball.rect.y = screen.get_height() - paddle.dimensions[1] - ball.rect.height
             ball.bounce(diff)
             if sound:
-            	pygame.mixer.music.load('assets/paddle_sound.mp3')
-            	pygame.mixer.music.play(0)
+                pygame.mixer.music.load('assets/paddle_sound.mp3')
+                pygame.mixer.music.play(0)
         all_sprites.draw(screen)
         pygame.display.flip()
 
@@ -412,5 +418,6 @@ def main_game(level=1):
 
     pygame.quit()
     quit()
+
 
 game_intro()
