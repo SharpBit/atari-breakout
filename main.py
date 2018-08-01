@@ -202,7 +202,8 @@ def options():  # pops up the resolution options
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                oprunning = False
+                pygame.quit()
+                quit()
 
         button('1920 x 1080', (((1920 / 2) - 500) * disp_x), ((((1080 / 3) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op1)
         button('1366 x 768', (((1920 / 2) - 500) * disp_x), (((((1080 / 3) * 2) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op2)
