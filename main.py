@@ -40,6 +40,10 @@ clock = pygame.time.Clock()
 sound = True
 music = True
 
+breakout_icon = pygame.image.load('assets/breakout_icon.png')
+breakout_icon = pygame.transform.scale(breakout_icon, (32, 32))
+pygame.display.set_icon(breakout_icon)
+
 
 class Paddle(pygame.sprite.Sprite):
 
