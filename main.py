@@ -156,15 +156,18 @@ def QUIT():  # makes the quit button work
     quit()
 
 
-def button(msg, x, y, w, h, ic, ac, action=None):
-        # msg = text, x/y = pos of button, w/h = width height, ic = color when mouse not hover, ac = color when mouse hover, action = function to execute
+def button(msg, x, y, w, h, ic, ac, action=None): #creates a button
+    # msg = text, x/y = pos of button, w/h = width height, ic = color when mouse not hover, ac = color when mouse hover, action = function to execute
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if x + w > mouse[0] > x and y + h > mouse[1] > y:
         pygame.draw.rect(screen, ac, (x, y, w, h))
 
         if click[0] == 1 and action:
-            action()
+        	if sound: # triggers sound effect
+	        	pygame.mixer.music.load('assets/button_click.mp3')
+	        	pygame.mixer.music.play(0)
+	        action()
     else:
         pygame.draw.rect(screen, ic, (x, y, w, h))
 
@@ -173,11 +176,27 @@ def button(msg, x, y, w, h, ic, ac, action=None):
     text_rect.center = ((x + (w / 2)), (y + (h / 2)))
     screen.blit(text_surf, text_rect)
 
-soundImg = pygame.image.load('assets/sound.png')
-soundImg = pygame.transform.scale(soundImg, (int(800 * disp_x), int(800 * disp_x)))  
 
-musicImg = pygame.image.load('assets/music.png')
-musicImg = pygame.transform.scale(musicImg, (int(800 * disp_x), int(800 * disp_x)))
+def icon(img, x, y, w, h, ic, ac, action=None):  # loads the icon/button
+    # x/y = pos of button, w/h = width height, ic = color when mouse not hover, ac = color when mouse hover, action = function to execute
+    mouse = pygame.mouse.get_pos()
+    click = pygame.mouse.get_pressed()
+    if x + w > mouse[0] > x and y + h > mouse[1] > y:
+        pygame.draw.rect(screen, white, (x, y, w, h), 10)
+        pygame.draw.rect(screen, ac, (x, y, w, h))
+
+        if click[0] == 1 and action:
+        	action()
+        	if sound: # triggers sound effect
+	        	pygame.mixer.music.load('assets/button_click.mp3')
+	        	pygame.mixer.music.play(0)
+    else:
+        pygame.draw.rect(screen, dim_white, (x, y, w, h), 10)
+        pygame.draw.rect(screen, ic, (x, y, w, h))
+
+    # draws image into the surface
+    screen.blit(img, (x, y))
+
 
 def s_on():
     global sound
@@ -234,24 +253,6 @@ def options():  # pops up the resolution options
         button('X', 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, red, bright_red, game_intro)  # button is slow rn, so use esc
         text_box('Press ESC or click X to leave this menu', 700 * disp_x, 1050 *disp_y)
         pygame.display.flip()  # allows options windows to actually stay
-
-
-def icon(img, x, y, w, h, ic, ac, action=None):  # loads the icon/button
-    # x/y = pos of button, w/h = width height, ic = color when mouse not hover, ac = color when mouse hover, action = function to execute
-    mouse = pygame.mouse.get_pos()
-    click = pygame.mouse.get_pressed()
-    if x + w > mouse[0] > x and y + h > mouse[1] > y:
-        pygame.draw.rect(screen, ac, (x, y, w, h), 5)
-        pygame.draw.rect(screen, ac, (x, y, w, h))
-
-        if click[0] == 1 and action:
-            action()
-    else:
-        pygame.draw.rect(screen, ic, (x, y, w, h), 5)
-        pygame.draw.rect(screen, ic, (x, y, w, h))
-
-    # draws gearImg into the surface
-    screen.blit(img, (x, y))
 
 
 def game_intro():  # title screen for breakout
@@ -361,6 +362,9 @@ def main_game(level=1):
             # set the ball's y if the edge of the paddle
             ball.rect.y = screen.get_height() - paddle.dimensions[1] - ball.rect.height
             ball.bounce(diff)
+            if sound:
+            	pygame.mixer.music.load('assets/paddle_sound.mp3')
+            	pygame.mixer.music.play(0)
         all_sprites.draw(screen)
         pygame.display.flip()
 
@@ -375,6 +379,8 @@ def main_game(level=1):
         # If we actually hit a block, bounce the ball
         if len(deadblocks) > 0:
             ball.bounce(0)
+            pygame.mixer.music.load('assets/brick_break.mp3')
+            pygame.mixer.music.play(0)
 
             # Game ends if all the blocks are gone
             if len(blocks) == 0:
