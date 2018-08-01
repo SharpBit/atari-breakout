@@ -169,6 +169,12 @@ def button(msg, x, y, w, h, ic, ac, action=None):
     screen.blit(text_surf, text_rect)
 
 
+def op1():  # music config
+    return
+
+def op2():  # sound config
+    return
+
 def options():  # pops up the resolution options
     oprunning = True
     while oprunning:
@@ -181,20 +187,23 @@ def options():  # pops up the resolution options
                 pygame.quit()
                 quit()
 
-        button('1920 x 1080', (((1920 / 2) - 500) * disp_x), ((((1080 / 3) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue)
-        button('1366 x 768', (((1920 / 2) - 500) * disp_x), (((((1080 / 3) * 2) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue)
-        button('1280 x 720', (((1920 / 2) - 500) * disp_x), (((((1080 / 3) * 3) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue)
+        soundImg = pygame.image.load('assets/sound.png')
+        soundImg = pygame.transform.scale(soundImg, (int(800 * disp_x), int(800 * disp_x)))  
+        
+        musicImg = pygame.image.load('assets/music.png')
+        musicImg = pygame.transform.scale(musicImg, (int(800 * disp_x), int(800 * disp_x)))
+
+        icon(soundImg, (((80)) * disp_x), ((((1080 / 2) - 400)) * disp_y), 800 * disp_x, 800 * disp_y, dark_blue, blue, op1)
+        icon(musicImg, (((1040)) * disp_x), ((((1080 / 2) - 400)) * disp_y), 800 * disp_x, 800 * disp_y, dark_blue, blue, op2)
 
         button('X', 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, red, bright_red, game_intro)  # button is slow rn, so use esc
-        text_box('Press ESC or click X to leave this menu', 700 * disp_x, 1050 * disp_y)
+        text_box('Press ESC or click X to leave this menu', 700 * disp_x, 1050 *disp_y)
 
         pygame.display.flip()  # allows options windows to actually stay
 
 
-def gear(x, y, w, h, ic, ac, action=None):  # loads the options button/gear picture
+def icon(img, x, y, w, h, ic, ac, action=None):  # loads the icon/button
     # x/y = pos of button, w/h = width height, ic = color when mouse not hover, ac = color when mouse hover, action = function to execute
-    gearImg = pygame.image.load('assets/gear.png')
-    gearImg = pygame.transform.scale(gearImg, (int(100 * disp_x), int(100 * disp_y)))
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if x + w > mouse[0] > x and y + h > mouse[1] > y:
@@ -208,10 +217,11 @@ def gear(x, y, w, h, ic, ac, action=None):  # loads the options button/gear pict
         pygame.draw.rect(screen, ic, (x, y, w, h))
 
     # draws gearImg into the surface
-    screen.blit(gearImg, ((25 * disp_x), (25 * disp_y)))
-
+    screen.blit(img, (x, y))
 
 def game_intro():  # title screen for breakout
+    gearImg = pygame.image.load('assets/gear.png')
+    gearImg = pygame.transform.scale(gearImg, (int(100 * disp_x), int(100 * disp_y)))
     intro = True
     pygame.mouse.set_visible(1)  # makes the mouse appear
     while intro:
@@ -237,7 +247,7 @@ def game_intro():  # title screen for breakout
         button('QUIT', 1160 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, red, bright_red, QUIT)
 
         # options gear button
-        gear(25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, dim_white, white, options)
+        icon(gearImg, 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, dim_white, white, options)
 
         pygame.display.update()
         clock.tick(60)
