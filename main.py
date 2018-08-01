@@ -129,12 +129,12 @@ class Block(pygame.sprite.Sprite):
         self.rect.y = y
 
 
-def text_objects(text, font):
+def text_objects(text, font): # renders text
     text_surface = font.render(text, True, white)
     return text_surface, text_surface.get_rect()
 
 
-def text_box(msg, x, y):
+def text_box(msg, x, y): # makes a text box
     small_text = pygame.font.Font("assets/PressStart2P.ttf", int(35 * disp_x))
     text_surf, text_rect = text_objects(msg, small_text)
     text_rect.center = ((x), (y))
@@ -209,6 +209,7 @@ def options():  # pops up the resolution options
         button('1280 x 720', (((1920 / 2) - 500) * disp_x), (((((1080 / 3) * 3) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op3)
 
         button('X', 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, red, bright_red, game_intro)  # button is slow rn, so use esc
+        text_box('Press ESC or click X to leave this menu', 600 * disp_x, 1054 *disp_y)
 
         pygame.display.flip()  # allows options windows to actually stay
 
