@@ -195,13 +195,15 @@ def op3():  # 1280 x 720 option
 
 
 def options():  # pops up the resolution options
-    while True:
+    oprunning = True
+    while oprunning:
         clock.tick(60)
         screen.fill(black)
         paddle.handle_keys()
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                oprunning = False
 
         button('1920 x 1080', (((1920 / 2) - 500) * disp_x), ((((1080 / 3) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op1)
         button('1366 x 768', (((1920 / 2) - 500) * disp_x), (((((1080 / 3) * 2) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op2)
@@ -255,8 +257,8 @@ def game_intro():  # title screen for breakout
         screen.blit(TextSurf, TextRect)
 
         # start/quit buttons
-        button('START', 560 * disp_x, 650 * disp_y, 200, 100, green, bright_green, main_game)
-        button('QUIT', 1160 * disp_x, 650 * disp_y, 200, 100, red, bright_red, QUIT)
+        button('START', 560 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, green, bright_green, main_game)
+        button('QUIT', 1160 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, red, bright_red, QUIT)
 
         # options gear button
         gear(25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, dim_white, white, options)
