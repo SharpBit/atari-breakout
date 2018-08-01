@@ -37,6 +37,9 @@ screen.fill(black)
 pygame.display.set_caption('Atari Breakout')
 clock = pygame.time.Clock()
 
+sound = True
+music = True
+
 
 class Paddle(pygame.sprite.Sprite):
 
@@ -170,13 +173,27 @@ def button(msg, x, y, w, h, ic, ac, action=None):
     text_rect.center = ((x + (w / 2)), (y + (h / 2)))
     screen.blit(text_surf, text_rect)
 
+soundImg = pygame.image.load('assets/sound.png')
+soundImg = pygame.transform.scale(soundImg, (int(800 * disp_x), int(800 * disp_x)))  
 
-def op1():  # music config
-    return
+musicImg = pygame.image.load('assets/music.png')
+musicImg = pygame.transform.scale(musicImg, (int(800 * disp_x), int(800 * disp_x)))
 
+def s_on():
+    global sound
+    sound = False
 
-def op2():  # sound config
-    return
+def s_off():  # music config
+    global sound
+    sound = True
+
+def m_on():
+    global music
+    music = False
+
+def m_off():  # sound config
+    global music
+    music = True
 
 
 def options():  # pops up the resolution options
@@ -192,17 +209,30 @@ def options():  # pops up the resolution options
                 quit()
 
         soundImg = pygame.image.load('assets/sound.png')
-        soundImg = pygame.transform.scale(soundImg, (int(800 * disp_x), int(800 * disp_x)))
+        soundImg = pygame.transform.scale(soundImg, (int(400 * disp_x), int(400 * disp_x)))
 
         musicImg = pygame.image.load('assets/music.png')
-        musicImg = pygame.transform.scale(musicImg, (int(800 * disp_x), int(800 * disp_x)))
+        musicImg = pygame.transform.scale(musicImg, (int(400 * disp_x), int(400 * disp_x)))
 
-        icon(soundImg, (((80)) * disp_x), ((((1080 / 2) - 400)) * disp_y), 800 * disp_x, 800 * disp_y, dark_blue, blue, op1)
-        icon(musicImg, (((1040)) * disp_x), ((((1080 / 2) - 400)) * disp_y), 800 * disp_x, 800 * disp_y, dark_blue, blue, op2)
+        nsoundImg = pygame.image.load('assets/sound_mute.png')
+        nsoundImg = pygame.transform.scale(nsoundImg, (int(400 * disp_x), int(400 * disp_x)))  
+
+        nmusicImg = pygame.image.load('assets/music_mute.png')
+        nmusicImg = pygame.transform.scale(nmusicImg, (int(400 * disp_x), int(400 * disp_x)))
+
+        s_ind = 'On' if sound else 'Off'
+        m_ind = 'On' if music else 'Off'
+
+        icon(nsoundImg, (1400 * disp_x), (((1080 / 4) - 200) * disp_y), 400 * disp_x, 400 * disp_y, dark_blue, blue, s_on)
+        icon(soundImg, (925 * disp_x), (((1080 / 4) - 200)* disp_y), 400 * disp_x, 400 * disp_y, dark_blue, blue, s_off)
+        icon(nmusicImg, (1400 * disp_x), (((1080 / 4) + 275) * disp_y), 400 * disp_x, 400 * disp_y, dark_blue, blue, m_on)
+        icon(musicImg, (925 * disp_x), (((1080 / 4) + 275) * disp_y), 400 * disp_x, 400 * disp_y, dark_blue, blue, m_off)
+
+        text_box('Sound : ' + s_ind, 400 * disp_x, 500 * disp_y, 60)
+        text_box('Music : ' + m_ind, 400 * disp_x, 600 * disp_y, 60)
 
         button('X', 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, red, bright_red, game_intro)  # button is slow rn, so use esc
-        text_box('Press ESC or click X to leave this menu', 700 * disp_x, 1050 * disp_y)
-
+        text_box('Press ESC or click X to leave this menu', 700 * disp_x, 1050 *disp_y)
         pygame.display.flip()  # allows options windows to actually stay
 
 
@@ -248,8 +278,8 @@ def game_intro():  # title screen for breakout
         screen.blit(TextSurf, TextRect)
 
         # start/quit buttons
-        button('START', 560 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, green, bright_green, main_game)
-        button('QUIT', 1160 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, red, bright_red, QUIT)
+        button('START', 580 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, green, bright_green, main_game)
+        button('QUIT', 1040 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, red, bright_red, QUIT)
 
         # options gear button
         icon(gearImg, 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, dim_white, white, options)
