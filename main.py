@@ -7,6 +7,9 @@
 import math
 import pygame
 import random
+import re
+
+from screeninfo import get_monitors
 
 pygame.init()
 
@@ -20,10 +23,10 @@ bright_red = (255, 0, 0)
 bright_green = (0, 255, 0)
 dim_white = (200, 200, 200)
 
-with open('resolution.txt') as f:
-    resolution = f.read().split('x')
-    disp_width = int(resolution[0])
-    disp_height = int(resolution[1])
+res = str(get_monitors()[0])
+
+disp_width = int(res[8:12])
+disp_height = int(res[13:17]) if disp_width >= 1920 else int(res[13:16])
 
 disp_x = disp_width / 1920  # creates a scale for width of game (customizable)
 disp_y = disp_height / 1080  # creates a scale for height of game (customizable)
@@ -79,6 +82,9 @@ class Ball(pygame.sprite.Sprite):
         self.direction = (180 - self.direction) % 360
         self.direction -= difference
 
+    def set_speed(self, speed):
+        self.speed = speed
+
     def change_speed(self, multiplier):
         """Lets you update the speed from the main loop"""
         self.speed *= multiplier
@@ -129,12 +135,12 @@ class Block(pygame.sprite.Sprite):
         self.rect.y = y
 
 
-def text_objects(text, font): # renders text
+def text_objects(text, font):  # renders text
     text_surface = font.render(text, True, white)
     return text_surface, text_surface.get_rect()
 
 
-def text_box(msg, x, y): # makes a text box
+def text_box(msg, x, y):  # makes a text box
     small_text = pygame.font.Font("assets/PressStart2P.ttf", int(35 * disp_x))
     text_surf, text_rect = text_objects(msg, small_text)
     text_rect.center = ((x), (y))
@@ -164,36 +170,6 @@ def button(msg, x, y, w, h, ic, ac, action=None):
     screen.blit(text_surf, text_rect)
 
 
-def op1():  # 1920 x 1080 option
-    global disp_x
-    global disp_y
-    with open('resolution.txt', 'w') as f:
-        f.write('1920x1080')
-    disp_x = 1920
-    disp_y = 1080
-    pygame.display.flip()
-
-
-def op2():  # 1366 x 768 option
-    global disp_x
-    global disp_y
-    with open('resolution.txt', 'w') as f:
-        f.write('1366x768')
-    disp_x = 1366
-    disp_y = 768
-    pygame.display.flip()
-
-
-def op3():  # 1280 x 720 option
-    global disp_x
-    global disp_y
-    with open('resolution.txt', 'w') as f:
-        f.write('1280x720')
-    disp_x = 1280
-    disp_y = 720
-    pygame.display.flip()
-
-
 def options():  # pops up the resolution options
     oprunning = True
     while oprunning:
@@ -206,12 +182,12 @@ def options():  # pops up the resolution options
                 pygame.quit()
                 quit()
 
-        button('1920 x 1080', (((1920 / 2) - 500) * disp_x), ((((1080 / 3) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op1)
-        button('1366 x 768', (((1920 / 2) - 500) * disp_x), (((((1080 / 3) * 2) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op2)
-        button('1280 x 720', (((1920 / 2) - 500) * disp_x), (((((1080 / 3) * 3) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op3)
+        button('1920 x 1080', (((1920 / 2) - 500) * disp_x), ((((1080 / 3) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue)
+        button('1366 x 768', (((1920 / 2) - 500) * disp_x), (((((1080 / 3) * 2) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue)
+        button('1280 x 720', (((1920 / 2) - 500) * disp_x), (((((1080 / 3) * 3) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue)
 
         button('X', 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, red, bright_red, game_intro)  # button is slow rn, so use esc
-        text_box('Press ESC or click X to leave this menu', 700 * disp_x, 1050 *disp_y)
+        text_box('Press ESC or click X to leave this menu', 700 * disp_x, 1050 * disp_y)
 
         pygame.display.flip()  # allows options windows to actually stay
 
@@ -280,22 +256,33 @@ ball = Ball(white, 30 * disp_x, 30 * disp_y)
 balls.add(ball)
 all_sprites.add(ball)
 
-top = 80  # y of top layer of blocks
 
-# Five rows of blocks
-for row in range(5):
-    for column in range(8):
-        block = Block(red, (240 * disp_x), (54 * disp_y), column * (240 * disp_x + 2), top)
-        blocks.add(block)
-        all_sprites.add(block)
-    # Move the top of the next row down
-    top += 54 * disp_y + 2
+def setup_blocks():
+    global disp_y
+    top = 80  # y of top layer of blocks
+    # Five rows of blocks
+    for row in range(5):
+        for column in range(8):
+            block = Block(red, (240 * disp_x), (54 * disp_y), column * (240 * disp_x + 2), top)
+            blocks.add(block)
+            all_sprites.add(block)
+        # Move the top of the next row down
+        top += 54 * disp_y + 2
 
 
-def main_game():
-    lives = 10
+def main_game(level=1):
     running = True
     sped_up = False
+    setup_blocks()
+    ball.set_speed(10)
+    if level == 1:
+        lives = 10
+    elif level == 2:
+        ball.set_speed(12)
+    elif level == 3:
+        ball.set_speed(14)
+    else:
+        running = False  # only up to level 3 for now
     while running:
         pygame.mouse.set_visible(0)  # makes mouse disappear
         clock.tick(60)  # 60 fps
@@ -339,7 +326,7 @@ def main_game():
 
             # Game ends if all the blocks are gone
             if len(blocks) == 0:
-                running = False
+                main_game(2)
 
     pygame.quit()
     quit()
