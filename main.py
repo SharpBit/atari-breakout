@@ -7,7 +7,6 @@
 import math
 import pygame
 import random
-import re
 
 from screeninfo import get_monitors
 
