@@ -14,14 +14,15 @@ black = (0, 0, 0)
 white = (255, 255, 255)
 red = (200, 0, 0)
 blue = (50, 150, 255)
+dark_blue = (40, 120, 215)
 green = (0, 200, 0)
 bright_red = (255, 0, 0)
 bright_green = (0, 255, 0)
 dim_white = (200, 200, 200)
 
 # change numbers below to affect resolution of game
-disp_width = 1920
-disp_height = 1080
+disp_width = 1366
+disp_height = 768
 
 disp_x = disp_width / 1920  # creates a scale for width of game (customizable)
 disp_y = disp_height / 1080  # creates a scale for height of game (customizable)
@@ -156,15 +157,46 @@ def button(msg, x, y, w, h, ic, ac, action=None):
     else:
         pygame.draw.rect(screen, ic, (x, y, w, h))
 
-    small_text = pygame.font.Font('assets/PressStart2P.ttf', int(35 * disp_x))
+    small_text = pygame.font.Font('assets/PressStart2P.ttf', int(50 * disp_x))
     text_surf, text_rect = text_objects(msg, small_text)
     text_rect.center = ((x + (w / 2)), (y + (h / 2)))
     screen.blit(text_surf, text_rect)
 
+def op1(): #1920 x 1080 option
+    disp_width = 1920
+    disp_height = 1080
 
-def gear(x, y, w, h, ic, ac, action=None):
+def op2(): #1366 x 768 option
+    disp_width = 1366
+    disp_height = 768
+
+def op3 (): #1280 x 720 option
+    disp_width = 1280
+    disp_height = 720
+
+def options(): #pops up the resolution options
+    while True:
+        clock.tick(60)
+        screen.fill(black)
+        paddle.handle_keys()
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                oprunning = False
+
+        button('1920 x 1080', (((1920/2) - 500) * disp_x),((((1080/3) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op1)
+        button('1366 x 768', (((1920/2) - 500) * disp_x),(((((1080/3) * 2) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op2)
+        button('1280 x 720', (((1920/2) - 500) * disp_x),(((((1080/3) * 3) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op3)
+
+        button('X', 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 *disp_y, red, bright_red, game_intro) #button is slow rn, so use esc
+
+        pygame.display.flip() #allows options windows to actually stay
+
+
+def gear(x, y, w, h, ic, ac, action=None): #loads the options button/gear picture
     # x/y = pos of button, w/h = width height, ic = color when mouse not hover, ac = color when mouse hover, action = function to execute
     gearImg = pygame.image.load('assets/gear.png')
+    gearImg = pygame.transform.scale(gearImg, (int(100 * disp_x), int(100 * disp_y)))
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
     if x + w > mouse[0] > x and y + h > mouse[1] > y:
@@ -178,7 +210,7 @@ def gear(x, y, w, h, ic, ac, action=None):
         pygame.draw.rect(screen, ic, (x, y, w, h))
 
     # draws gearImg into the surface
-    screen.blit(gearImg, ((x * disp_x), (y * disp_y), (w * disp_x), (h * disp_y)))
+    screen.blit(gearImg, ((25 * disp_x), (25 * disp_y)))
 
 
 def game_intro():  # title screen for breakout
@@ -207,7 +239,7 @@ def game_intro():  # title screen for breakout
         button('QUIT', 1160 * disp_x, 650 * disp_y, 200, 100, red, bright_red, QUIT)
 
         # options gear button
-        gear(10 * disp_x, 10 * disp_y, 107 * disp_x, 107 * disp_y, dim_white, white)
+        gear(25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, dim_white, white, options)
 
         pygame.display.update()
         clock.tick(60)
