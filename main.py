@@ -40,6 +40,10 @@ clock = pygame.time.Clock()
 sound = True
 music = True
 
+if music:
+	pygame.mixer.music.load('assets/8-bit-music.mp3')
+	pygame.mixer.music.play(-1)
+
 breakout_icon = pygame.image.load('assets/breakout_icon.png')
 breakout_icon = pygame.transform.scale(breakout_icon, (32, 32))
 pygame.display.set_icon(breakout_icon)
@@ -171,6 +175,9 @@ def button(msg, x, y, w, h, ic, ac, action=None): #creates a button
         	if sound: # triggers sound effect
 	        	pygame.mixer.music.load('assets/button_click.mp3')
 	        	pygame.mixer.music.play(0)
+	        if music:
+	        	pygame.mixer.music.load('assets/8-bit-music.mp3')
+	        	pygame.mixer.music.play(-1)
 	        action()
     else:
         pygame.draw.rect(screen, ic, (x, y, w, h))
@@ -194,6 +201,10 @@ def icon(img, x, y, w, h, ic, ac, action=None):  # loads the icon/button
         	if sound: # triggers sound effect
 	        	pygame.mixer.music.load('assets/button_click.mp3')
 	        	pygame.mixer.music.play(0)
+	        if music:
+	        	pygame.mixer.music.load('assets/8-bit-music.mp3')
+	        	pygame.mixer.music.play(-1)
+
     else:
         pygame.draw.rect(screen, dim_white, (x, y, w, h), 10)
         pygame.draw.rect(screen, ic, (x, y, w, h))
@@ -323,6 +334,7 @@ def main_game(level=1):
     running = True
     sped_up = False
     lives = 10
+    pygame.mixer.music.stop()
     screen.fill(black)
     setup_blocks()
     text_box('LIVES: ' + str(lives), (175 * disp_x), (40 * disp_x))
@@ -383,8 +395,9 @@ def main_game(level=1):
         # If we actually hit a block, bounce the ball
         if len(deadblocks) > 0:
             ball.bounce(0)
-            pygame.mixer.music.load('assets/brick_break.mp3')
-            pygame.mixer.music.play(0)
+            if sound:
+                pygame.mixer.music.load('assets/brick_break.mp3')
+                pygame.mixer.music.play(0)
 
             # Game ends if all the blocks are gone
             if len(blocks) == 0:
@@ -399,6 +412,5 @@ def main_game(level=1):
 
     pygame.quit()
     quit()
-
 
 game_intro()
