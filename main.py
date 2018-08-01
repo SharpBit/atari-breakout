@@ -129,12 +129,12 @@ class Block(pygame.sprite.Sprite):
         self.rect.y = y
 
 
-def text_objects(text, font):
+def text_objects(text, font): # renders text
     text_surface = font.render(text, True, white)
     return text_surface, text_surface.get_rect()
 
 
-def text_box(msg, x, y):
+def text_box(msg, x, y): # makes a text box
     small_text = pygame.font.Font("assets/PressStart2P.ttf", int(35 * disp_x))
     text_surf, text_rect = text_objects(msg, small_text)
     text_rect.center = ((x), (y))
@@ -195,7 +195,8 @@ def op3():  # 1280 x 720 option
 
 
 def options():  # pops up the resolution options
-    while True:
+    oprunning = True
+    while oprunning:
         clock.tick(60)
         screen.fill(black)
         paddle.handle_keys()
@@ -210,6 +211,7 @@ def options():  # pops up the resolution options
         button('1280 x 720', (((1920 / 2) - 500) * disp_x), (((((1080 / 3) * 3) - 300)) * disp_y), 1000 * disp_x, 200 * disp_y, dark_blue, blue, op3)
 
         button('X', 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, red, bright_red, game_intro)  # button is slow rn, so use esc
+        text_box('Press ESC or click X to leave this menu', 700 * disp_x, 1050 *disp_y)
 
         pygame.display.flip()  # allows options windows to actually stay
 
@@ -256,8 +258,8 @@ def game_intro():  # title screen for breakout
         screen.blit(TextSurf, TextRect)
 
         # start/quit buttons
-        button('START', 560 * disp_x, 650 * disp_y, 200, 100, green, bright_green, main_game)
-        button('QUIT', 1160 * disp_x, 650 * disp_y, 200, 100, red, bright_red, QUIT)
+        button('START', 560 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, green, bright_green, main_game)
+        button('QUIT', 1160 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, red, bright_red, QUIT)
 
         # options gear button
         gear(25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, dim_white, white, options)
