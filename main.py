@@ -288,9 +288,8 @@ def game_intro():  # title screen for breakout
                 pygame.quit()
                 quit()
 
-
-        # title of the game
         screen.fill(black)
+        # button overlays
         rbut_overlay = pygame.image.load('assets/rbut_overlay.png')
         rbut_overlay = pygame.transform.scale(rbut_overlay, (int(320 * disp_x), int(170 * disp_y)))
         screen.blit(rbut_overlay, (int(1030 * disp_x), int(640 * disp_y)))
@@ -299,23 +298,20 @@ def game_intro():  # title screen for breakout
         gbut_overlay = pygame.transform.scale(gbut_overlay, (int(320 * disp_x), int(170 * disp_y)))
         screen.blit(gbut_overlay, (int(570 * disp_x), int(640 * disp_y)))
 
+        # title
         banner_overlay = pygame.image.load('assets/banner_overlay.png')
         banner_overlay = pygame.transform.scale(banner_overlay, (int(1920 * disp_x), int(1080 * disp_y)))
         screen.blit(banner_overlay, (int(0 * disp_x), int(0 * disp_y)))
 
-        large_text = pygame.font.Font('assets/PressStart2P.ttf', int(150 * disp_x))
-        TextSurf, TextRect = text_objects('ATARI', large_text)
-        TextRect.center = (((1920 / 2) * disp_x), ((300) * disp_x))
-        screen.blit(TextSurf, TextRect)
-
-        large_text = pygame.font.Font('assets/PressStart2P.ttf', int(150 * disp_x))
-        TextSurf, TextRect = text_objects('BREAKOUT', large_text)
-        TextRect.center = (((1920 / 2) * disp_x), ((500) * disp_x))
-        screen.blit(TextSurf, TextRect)
+        # filler??
+        breakout_icon = pygame.image.load('assets/breakout_icon.png')
+        breakout_icon = pygame.transform.scale(breakout_icon, (int(150 * disp_x), int(150 * disp_y)))
+        screen.blit(breakout_icon, (int(1760 * disp_x), int(10 * disp_y)))
 
         # start/quit buttons
-        button('START', 580 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, green, bright_green, main_game)
-        button('QUIT', 1040 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, red, bright_red, QUIT)
+        #button('START', 580 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, green, bright_green, main_game)
+        #button('QUIT', 1040 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, red, bright_red, QUIT)
+        #button('¯\\\\_(\'_\')_/¯', 100 * disp_x, 600 * disp_y, 400 *disp_x, 400 * disp_y, blue, blue)
 
         # options gear button
         icon(gearImg, 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, dim_white, white, options)
@@ -363,18 +359,23 @@ def game_done(win: bool):
         paddle.handle_keys()
         screen.fill(black)
         clock.tick(60)
+
+        cont_overlay = pygame.image.load('assets/cont_overlay.png')
+        cont_overlay = pygame.transform.scale(cont_overlay, (int(570 * disp_x), int(170 * disp_y)))
+        screen.blit(cont_overlay, (int(700 * disp_x), int(640 * disp_y)))
+
         if win:
-            text_box('YOU WIN', 960 * disp_x, 500 * disp_y, 150)
+            text_box('YOU WIN', 960 * disp_x, 400 * disp_y, 150)
         else:
-            text_box('GAME OVER', 960 * disp_x, 500 * disp_y, 150)
-        button('CONTINUE', (960 - 250) * disp_x, 750 * disp_y, 500 * disp_x, 150 * disp_y, green, bright_green, game_intro)
+            text_box('GAME OVER', 960 * disp_x, 400 * disp_y, 150)
+        button('CONTINUE', (960 - 250) * disp_x, 650 * disp_y, 550 * disp_x, 150 * disp_y, green, bright_green, game_intro)
         pygame.display.flip()
 
 
 def main_game(level=1):
     running = True
     sped_up = False
-    lives = 10
+    lives = 1
     pygame.mixer.music.stop()
     screen.fill(black)
     setup_blocks(level)
