@@ -276,6 +276,29 @@ def options():  # pops up the resolution options
         pygame.display.flip()  # allows options windows to actually stay
 
 
+def logo_screen():
+    intro = True
+    clock.tick(60)
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        screen.fill(black)
+
+        text_box('BROUGHT TO YOU BY: ', 960 * disp_x, 150 * disp_y, 75)
+
+        shrug_icon = pygame.image.load('assets/shrug_logo.png')
+        shrug_icon = pygame.transform.scale(shrug_icon, (int(1312 * disp_x), int(610 * disp_y)))
+        screen.blit(shrug_icon, (int(304 * disp_x), int(325  * disp_y)))
+
+        pygame.display.flip()
+        time.sleep(3)
+
+        game_intro()
+
+
 def game_intro():  # title screen for breakout
     gearImg = pygame.image.load('assets/gear.png')
     gearImg = pygame.transform.scale(gearImg, (int(100 * disp_x), int(100 * disp_y)))
@@ -314,11 +337,6 @@ def game_intro():  # title screen for breakout
 
         # options gear button
         icon(gearImg, 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, dim_white, white, options)
-
-        # logo?
-        #shrug_icon = pygame.image.load('assets/shrug_logo.png')
-        #shrug_icon = pygame.transform.scale(shrug_icon, (int(430 * disp_x), int(300 * disp_y)))
-        #screen.blit(shrug_icon, (int(65 * disp_x), int(655 * disp_y)))
 
         pygame.display.update()
         clock.tick(60)
@@ -460,4 +478,4 @@ def main_game(level=1):
     quit()
 
 
-game_intro()
+logo_screen()
