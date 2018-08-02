@@ -47,6 +47,9 @@ if music:
     pygame.mixer.music.load('assets/8-bit-music.mp3')
     pygame.mixer.music.play(-1)
 
+if not sound and not music:
+    pygame.mixer.music.stop()
+
 breakout_icon = pygame.image.load('assets/breakout_icon.png')
 breakout_icon = pygame.transform.scale(breakout_icon, (32, 32))
 pygame.display.set_icon(breakout_icon)
@@ -181,6 +184,8 @@ def button(msg, x, y, w, h, ic, ac, action=None):  # creates a button
             if music:
                 pygame.mixer.music.load('assets/8-bit-music.mp3')
                 pygame.mixer.music.play(-1)
+            if not sound and not music:
+                pygame.mixer.music.stop()
             action()
     else:
         pygame.draw.rect(screen, ic, (x, y, w, h))
@@ -207,6 +212,8 @@ def icon(img, x, y, w, h, ic, ac, action=None):  # loads the icon/button
             if music:
                 pygame.mixer.music.load('assets/8-bit-music.mp3')
                 pygame.mixer.music.play(-1)
+            if not sound and not music:
+                pygame.mixer.music.stop()
 
     else:
         pygame.draw.rect(screen, dim_white, (x, y, w, h), 10)
