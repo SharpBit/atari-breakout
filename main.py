@@ -26,7 +26,6 @@ bright_green = (0, 255, 0)
 dim_white = (200, 200, 200)
 
 res = str(get_monitors()[0])
-print(res)
 
 disp_width = int(res[8:12])
 disp_height = int(res[13:17]) if disp_width >= 1920 else int(res[13:16])
@@ -278,6 +277,7 @@ def options():  # pops up the resolution options
 def game_intro():  # title screen for breakout
     gearImg = pygame.image.load('assets/gear.png')
     gearImg = pygame.transform.scale(gearImg, (int(100 * disp_x), int(100 * disp_y)))
+
     intro = True
     pygame.mouse.set_visible(1)  # makes the mouse appear
     while intro:
@@ -286,8 +286,21 @@ def game_intro():  # title screen for breakout
                 pygame.quit()
                 quit()
 
+
         # title of the game
         screen.fill(black)
+        rbut_overlay = pygame.image.load('assets/rbut_overlay.png')
+        rbut_overlay = pygame.transform.scale(rbut_overlay, (int(320 * disp_x), int(170 * disp_y)))
+        screen.blit(rbut_overlay, (int(1030 * disp_x), int(640 * disp_y)))
+
+        gbut_overlay = pygame.image.load('assets/gbut_overlay.png')
+        gbut_overlay = pygame.transform.scale(gbut_overlay, (int(320 * disp_x), int(170 * disp_y)))
+        screen.blit(gbut_overlay, (int(570 * disp_x), int(640 * disp_y)))
+
+        banner_overlay = pygame.image.load('assets/banner_overlay.png')
+        banner_overlay = pygame.transform.scale(banner_overlay, (int(1920 * disp_x), int(1080 * disp_y)))
+        screen.blit(banner_overlay, (int(0 * disp_x), int(0 * disp_y)))
+
         large_text = pygame.font.Font('assets/PressStart2P.ttf', int(150 * disp_x))
         TextSurf, TextRect = text_objects('ATARI', large_text)
         TextRect.center = (((1920 / 2) * disp_x), ((300) * disp_x))
