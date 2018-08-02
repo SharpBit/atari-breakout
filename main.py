@@ -309,12 +309,16 @@ def game_intro():  # title screen for breakout
         screen.blit(breakout_icon, (int(1760 * disp_x), int(10 * disp_y)))
 
         # start/quit buttons
-        #button('START', 580 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, green, bright_green, main_game)
-        #button('QUIT', 1040 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, red, bright_red, QUIT)
-        #button('¯\\\\_(\'_\')_/¯', 100 * disp_x, 600 * disp_y, 400 *disp_x, 400 * disp_y, blue, blue)
+        button('START', 580 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, green, bright_green, main_game)
+        button('QUIT', 1040 * disp_x, 650 * disp_y, 300 * disp_x, 150 * disp_y, red, bright_red, QUIT)
 
         # options gear button
         icon(gearImg, 25 * disp_x, 25 * disp_y, 100 * disp_x, 100 * disp_y, dim_white, white, options)
+
+        # logo?
+        #shrug_icon = pygame.image.load('assets/shrug_logo.png')
+        #shrug_icon = pygame.transform.scale(shrug_icon, (int(430 * disp_x), int(300 * disp_y)))
+        #screen.blit(shrug_icon, (int(65 * disp_x), int(655 * disp_y)))
 
         pygame.display.update()
         clock.tick(60)
@@ -375,7 +379,7 @@ def game_done(win: bool):
 def main_game(level=1):
     running = True
     sped_up = False
-    lives = 1
+    lives = 10
     pygame.mixer.music.stop()
     screen.fill(black)
     setup_blocks(level)
