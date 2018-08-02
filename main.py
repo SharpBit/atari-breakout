@@ -24,6 +24,8 @@ green = (0, 200, 0)
 bright_red = (255, 0, 0)
 bright_green = (0, 255, 0)
 dim_white = (200, 200, 200)
+purple = (75, 0, 130)
+pink = (225, 0, 225)
 
 res = str(get_monitors()[0])
 
@@ -335,12 +337,12 @@ balls.add(ball)
 all_sprites.add(ball)
 
 
-def setup_blocks():
+def setup_blocks(level):
     global disp_y
     top = 80  # y of top layer of blocks
     # Five rows of blocks
-    colors = [red, orange, yellow, green, blue]
-    for row in range(5):
+    colors = [red, orange, yellow, green, blue, purple, pink]
+    for row in range(5 + level - 1):
         for column in range(8):
             block = Block(colors[row], (240 * disp_x), (54 * disp_y), column * (240 * disp_x + 2), top)
             blocks.add(block)
@@ -349,16 +351,36 @@ def setup_blocks():
         top += 54 * disp_y
 
 
+def game_done(win: bool):
+    """Loads the game over/you win screen"""
+    pygame.mouse.set_visible(1)
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+
+        paddle.handle_keys()
+        screen.fill(black)
+        clock.tick(60)
+        if win:
+            text_box('YOU WIN', 960 * disp_x, 500 * disp_y, 150)
+        else:
+            text_box('GAME OVER', 960 * disp_x, 500 * disp_y, 150)
+        button('CONTINUE', (960 - 250) * disp_x, 750 * disp_y, 500 * disp_x, 150 * disp_y, green, bright_green, game_intro)
+        pygame.display.flip()
+
+
 def main_game(level=1):
     running = True
     sped_up = False
     lives = 10
     pygame.mixer.music.stop()
     screen.fill(black)
-    setup_blocks()
+    setup_blocks(level)
     text_box('LIVES: ' + str(lives), (175 * disp_x), (40 * disp_x))
     text_box('LEVEL ' + str(level), (disp_width - (145 * disp_x)), (40 * disp_x))
-    text_box('LEVEL ' + str(level), 1000 * disp_x, 500 * disp_y, 150)
+    text_box('LEVEL ' + str(level), 960 * disp_x, 500 * disp_y, 150)
     pygame.display.flip()
     time.sleep(3)
     ball.set_speed(10)
@@ -367,7 +389,7 @@ def main_game(level=1):
     elif level == 2:
         ball.set_speed(12)
     elif level == 3:
-        ball.set_speed(14)
+        ball.set_speed(15)
     else:
         running = False  # only up to level 3 for now
     while running:
@@ -385,7 +407,7 @@ def main_game(level=1):
             lives = ball.update(lives)
 
         if lives == 0:
-            running = False
+            game_done(False)
 
         text_box('LIVES: ' + str(lives), (175 * disp_x), (40 * disp_x))
         text_box('LEVEL ' + str(level), (disp_width - (145 * disp_x)), (40 * disp_x))
@@ -421,7 +443,7 @@ def main_game(level=1):
             # Game ends if all the blocks are gone
             if len(blocks) == 0:
                 if level == 3:
-                    running = False
+                    game_done(True)
                 # resets ball position
                 ball.direction = random.randint(-50, 50)
                 ball.x = ((1920 / 2) * disp_x)
