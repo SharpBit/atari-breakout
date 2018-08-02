@@ -287,14 +287,34 @@ def logo_screen():
 
         screen.fill(black)
 
-        text_box('BROUGHT TO YOU BY: ', 960 * disp_x, 150 * disp_y, 75)
+        text_box('BROUGHT TO YOU BY:', 960 * disp_x, 150 * disp_y, 75)
 
         shrug_icon = pygame.image.load('assets/shrug_logo.png')
         shrug_icon = pygame.transform.scale(shrug_icon, (int(1312 * disp_x), int(610 * disp_y)))
         screen.blit(shrug_icon, (int(304 * disp_x), int(325  * disp_y)))
 
         pygame.display.flip()
-        time.sleep(3)
+        time.sleep(2)
+
+        screen.fill(black)
+
+        text_box('INSPIRED BY:', 960 * disp_x, 150 * disp_y, 75)
+
+        atari_icon = pygame.image.load('assets/atari_logo.png')
+        atari_icon = pygame.transform.scale(atari_icon, (int(800 * disp_x), int(800 * disp_y)))
+        screen.blit(atari_icon, (int(550 * disp_x), int(250  * disp_y)))
+
+        pygame.display.flip()
+        time.sleep(2)
+
+        screen.fill(black)
+
+        music_overlay = pygame.image.load('assets/music_overlay.png')
+        music_overlay = pygame.transform.scale(music_overlay, (int(1920 * disp_x), int(1080 * disp_y)))
+        screen.blit(music_overlay, (0,0))
+
+        pygame.display.flip()
+        time.sleep(2)
 
         game_intro()
 
